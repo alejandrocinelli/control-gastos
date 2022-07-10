@@ -1,18 +1,31 @@
 import CloseBtn from '../img/cerrar.svg';
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import Mensaje  from './Mensaje'
 
-function Modal({setModal,animationModal, setAnimationModal,guardarGasto}) {
+function Modal({setModal,animationModal, setAnimationModal,guardarGasto, gastoEditar,setGastoEditar}) {
 
 const [mensaje,setMensaje] = useState("")
 const [nombre,setNombre] = useState('')
 const [cantidad,setCantidad] = useState(0)
 const [categoria,setCategoria]= useState('')
+const [id,setId] = useState('')
+const [fecha,setFecha] = useState('')
+
+useEffect(() => {
+  if(Object.keys(gastoEditar).length > 0){
+    setNombre(gastoEditar.nombre)
+    setCantidad(gastoEditar.cantidad)
+    setCategoria(gastoEditar.categoria)
+    setId(gastoEditar.id)
+    setFecha(gastoEditar.fecha)
+  }
+}, [])
 
 
   function OcultarModal (){
-        console.log("OcultarModal")
+      
     setAnimationModal(false)
+    setGastoEditar({})
     setTimeout(()=> {
       setModal(false)
     },500)
@@ -31,14 +44,15 @@ function handlerSubmit(e) {
     return
   }
 
-  function generarID(){
-    const random = Math.random().toString(36).substring(2) 
-        const date = Date.now().toString(36)
-        return random + date
-  }
+  //function generarID(){
+    //const random = Math.random().toString(36).substring(2) 
+      //  const date = Date.now().toString(36)
+        //return random + date
+  //}
 
-  
- guardarGasto({nombre,cantidad,categoria, id:generarID(), fecha: Date.now()})
+//   id:generarID(), fecha: Date.now()
+
+ guardarGasto({nombre,cantidad,categoria,id,fecha})
 
 }
 
@@ -52,7 +66,7 @@ function handlerSubmit(e) {
       </div>
 
     <form onSubmit={handlerSubmit} className={`formulario ${animationModal ? "animar" : "cerrar"}`}>
-      <legend>Nuevo Gasto</legend>
+      <legend> {Object.keys(gastoEditar).length > 0 ? "Editar Gasto" : " Nuevo Gasto"}</legend>
 
       {mensaje && <Mensaje tipo={"error"}> {mensaje}</Mensaje> }
       <div className='campo'>
@@ -81,7 +95,7 @@ function handlerSubmit(e) {
 
           </select>
       </div>      
-    <input type="submit" value="Añadir Gasto" />
+    <input type="submit" value={Object.keys(gastoEditar).length >0 ? "Guardar Cambios" : "Añadir Gasto" } />
 
     </form>
 

@@ -30,21 +30,31 @@ const diccionarioIconos = {
 
 }
 
-function Gasto({gasto}) {
+function Gasto({gasto,setGastoEditar,eliminarGasto}) {
 
-  const leadingActions = () => {
-    console.log("Editar gasto")
-  }
+// el prop destructive es para que se vea mas claro el icono de eliminar... una chucheria de la libreria
 
-  const trailingActions = () => {
-    console.log("Eliminar gasto")
-  }
+  const leadingActions = () => (
+    <LeadingActions>
+      <SwipeAction onClick={()=> setGastoEditar(gasto)}> 
+        Editar
+      </SwipeAction>
+    </LeadingActions>
+  )
+    
+  const trailingActions = () => (
+    <TrailingActions>
+     <SwipeAction destructive={true} onClick={()=> eliminarGasto(gasto.id) }> 
+      Eliminar
+     </SwipeAction> 
+    </TrailingActions>
+  )
 
   return (
     <SwipeableList>
       <SwipeableListItem
-      leadingActions={leadingActions}
-      trailingActions={trailingActions} 
+      leadingActions={leadingActions()}
+      trailingActions={trailingActions()} 
       >
     <div className="gasto sombra">
         <div className="contenido-gasto">
