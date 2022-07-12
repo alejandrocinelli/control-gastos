@@ -1,10 +1,13 @@
 import React from "react"
 import { useEffect, useState } from "react"
+import {CircularProgressbar} from "react-circular-progressbar"
+import 'react-circular-progressbar/dist/styles.css'
 
-function ControlPresupuesto({presupuesto,gastos}) {
+function ControlPresupuesto({presupuesto,gastos,setGastos,setPresupuesto,setpresupuestoValido}) {
 
     const [disponible, setDisponible] = useState(0)
     const [gastado, setGastado] = useState(0)
+    const [porcentaje,setPorcentaje] = useState(0)
 
     useEffect(() => {
      // recorrer los gastos y sumar el total
@@ -12,9 +15,17 @@ function ControlPresupuesto({presupuesto,gastos}) {
       
          setGastado(totalGastos)
          setDisponible(presupuesto - totalGastos)
+         setPorcentaje(((totalGastos * 100)/presupuesto).toFixed(2))
        
     }, [gastos])
     
+    function handleReset() {
+    
+        setGastos([])
+        setPresupuesto(0)
+        setpresupuestoValido(false)
+        
+    }
 
     function FomateadorPresu(cantidad) {
         return cantidad.toLocaleString('en-US', {
@@ -24,17 +35,24 @@ function ControlPresupuesto({presupuesto,gastos}) {
   return (
     <div className="contenedor-presupuesto contenedor sombra dos-columnas" >
         <div>
-            Grafica
+            <CircularProgressbar 
+            value={porcentaje} // representa el porcentaje de gasto recibe entre 0 y 100
+            text={`${porcentaje}% Gastado`}
+            />
         </div>
     <div className="contenido-presupuesto">
+        <button className="reset-app" 
+        type="button" 
+        onClick={handleReset}
+        > Resetear App</button>
         <p>
             <span>Presupuesto:</span>{FomateadorPresu(presupuesto)}
         </p>
-        <p>
-            <span>Disponible: </span>{disponible}
+        <p className={`${disponible < 0 ? "negativo" : ""} `}>
+            <span>Disponible: </span>${disponible}
         </p>
         <p>
-            <span>Gastado: </span>{gastado}
+            <span>Gastado: </span>${gastado}
         </p>
     </div>
 
